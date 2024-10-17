@@ -64,8 +64,7 @@ const App = () => {
     <div>
       <Header course={course}/>
 
-      <Content  course={course}
-      />
+      <Content course={course}/>
 
       <Total course={course} />
     </div>
