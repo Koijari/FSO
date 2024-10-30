@@ -4,3 +4,7 @@ Tehdyt tehtävät:
 - kurssitiedot
 - unicafe
 - anekdootit
+
+Osa 2  
+Tehdyt tehtävät:
+-
