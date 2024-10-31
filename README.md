@@ -7,4 +7,4 @@ Tehdyt tehtävät:
 
 Osa 2  
 Tehdyt tehtävät:
--
+-Kurssitiedot part 2
