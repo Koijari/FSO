@@ -3,17 +3,26 @@ import { useState } from 'react'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '050-05050505' }
-  ]) 
+    { name: 'Robert Ludlum', number: '050-05050505' },
+    { name: 'Wile E. Coyote', number: '555-34-BeebBeeb' },
+    { name: 'Karaoke Maestro', number: '045-SingALong' },
+    { name: 'Scott Mariner', number: '555-Bujah' }
+  ])
+
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [filterText, setFilterText] = useState('')
 
   const handleName = (event) => {
-    //console.log(event.target.value)
     setNewName(event.target.value)
   }
+
   const handleNumber = (event) => {
     setNewNumber(event.target.value)
+  }
+
+  const handleFilterChange = (event) => {
+    setFilterText(event.target.value)
   }
 
   const addName = (event) => {
@@ -23,7 +32,6 @@ const App = () => {
       number: newNumber
     }
     const namesInBook = persons.map(person => person.name)
-    //console.log(namesInBook, newName)
     if (!(namesInBook.includes(newName))) {
       setPersons(persons.concat(name))           
     } else {
@@ -33,9 +41,20 @@ const App = () => {
     setNewNumber('')
   }
 
+  const namesToShow = persons.filter(person => 
+    person.name.toLowerCase().includes(filterText.toLowerCase())
+  )
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+      filter shown with 
+        <input 
+          value={filterText} 
+          onChange={handleFilterChange} 
+        />
+      </div><br />
       <form onSubmit={addName}>
         <div>
           name: <input 
@@ -53,7 +72,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <ul>
-        {persons.map(person => 
+        {namesToShow.map(person => 
           <p key={person.name}>{ person.name } {person.number}</p>
         )}
       </ul>
