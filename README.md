@@ -6,5 +6,6 @@ Tehdyt tehtävät:
 - anekdootit
 
 Osa 2  
-Tehdyt tehtävät:
--Kurssitiedot part 2
+Tehdyt tehtävät:  
+- Kurssitiedot part 2  
+- Puhelinluettelo  
