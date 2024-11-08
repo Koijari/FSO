@@ -1,0 +1,14 @@
+
+
+.msg {
+    width: 25vw;
+    font-size: x-large;
+    background-color: lightgrey;
+    color: darkgreen;
+    text-align: center;
+    border: 2px solid darkgreen;
+}
+
+button {
+    padding-left: 10px;
+}

@@ -34,10 +34,24 @@ const Persons = ({ namesToShow, deleteName }) => {
   return (
     <>    
       {namesToShow.map(person => (
-        <p key={person.id}>{person.name} {person.number} <button onClick={() => deleteName(person.id) }>delete</button></p>
+        <p key={person.id}>{person.name} {person.number} 
+        <button onClick={() => deleteName(person.id) }>delete</button>
+        </p>
       ))}
       
     </>
+  )
+}
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="msg">
+      {message}
+    </div>
   )
 }
 
@@ -48,6 +62,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterText, setFilterText] = useState('')
+
+  const [message, setMessage] = useState('')
 
   const namesToShow = persons.filter(person => 
     person.name.toLowerCase().includes(filterText.toLowerCase())
@@ -81,14 +97,24 @@ const App = () => {
   
     if (existingPerson) {
       changeNumber(existingPerson.id, newNumber)
-    } else {
+    } else if (nameObj.name !== ''){
       personService.create(nameObj)
         .then(response => {
           setPersons(persons.concat(response.data))
+          setMessage(`Added ${nameObj.name}`)
+          setTimeout( () => {       
+            setMessage(null)
+          }, 3000)
+          clearInterval(setErrorMessage)
           setNewName('')
           setNewNumber('')
         })
         .catch(error => console.log('Luonti epäonnistui', error))
+    } else {
+      setMessage(`Add name & number`)
+      setTimeout( () => {
+        setMessage(null)
+      }, 3000)
     }
   }
   
@@ -101,7 +127,12 @@ const App = () => {
         .delName(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
+          setMessage(`${nameToDelete.name} deleted.`)
+          setTimeout( () => {       
+            setMessage(null)
+          }, 3000)
         })
+
         .catch(error => {
           console.log('Poisto epäonnistui', error)
         })
@@ -110,7 +141,7 @@ const App = () => {
 
   const changeNumber = (id, newNumber) => {
     const personToUpdate = persons.find(person => person.id === id)
-    console.log(personToUpdate)
+    //console.log(personToUpdate)
   
     if (personToUpdate) {
       if (personToUpdate.number !== newNumber) {
@@ -132,7 +163,10 @@ const App = () => {
             })
         }
       } else {
-        alert(`${personToUpdate.name} already has this number.`)
+        setMessage(`${personToUpdate.name} already has this number.`)
+        setTimeout( () => {       
+          setMessage(null)
+        }, 3000)
       }
     }
   }
@@ -140,7 +174,8 @@ const App = () => {
 
   return (
     <div>
-      <h1>Phonebook</h1>      
+      <h1>Phonebook</h1>
+      <Notification message={message} />
       <Filter filterText={ filterText } handleFilterChange={ handleFilterChange }/>
 
       <h3>Add a new</h3>
@@ -153,6 +188,5 @@ const App = () => {
     </div>
   )
 }
-
 
 export default App
