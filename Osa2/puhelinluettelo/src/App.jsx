@@ -15,14 +15,14 @@ const PersonForm = (props) => {
   //console.log(props)
   return(
     <>
-      <form onSubmit={props.addName}>
+      <form onSubmit={props.addNameNumber}>
         <div>
           name: <input value={props.newName || ''} onChange={props.handleName} />
           <br />
           number: <input value={props.newNumber || ''} onChange={props.handleNumber} />
         </div>
         <>
-          <button type={props.submit}>add</button>
+          <button type='submit'>add</button>
         </>
       </form>
     </>
@@ -75,32 +75,28 @@ const App = () => {
 
   const addNameNumber = (event) => {
     event.preventDefault()
-    const nameObj = {
-      name: newName,
-      number: newNumber
+    const existingPerson = persons.find(person => person.name === newName)
+    console.log(existingPerson)
+    const nameObj = { name: newName, number: newNumber }
+  
+    if (existingPerson) {
+      changeNumber(existingPerson.id, newNumber)
+    } else {
+      personService.create(nameObj)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => console.log('Luonti epäonnistui', error))
+    }
   }
-      
-  const namesInBook = persons.map(person => person.name)
-  //console.log(namesInBook)
-  if (!(namesInBook.includes(newName))) {
-    personService
-    .create(nameObj)
-    .then(response => {
-      setPersons(persons.concat(response.data))
-    })
-    .catch(error => console.log('Luonti epäonnistui', error)
-    )
-  } else {
-    alert(`${newName} is already added to phonebook`)
-  }
-  setNewName('')
-  setNewNumber('')
-  }
+  
 
   const deleteName = (id) => {
     //console.log(persons)
     const nameToDelete = persons.find(person => person.id === id)
-    if (window.confirm(`Delete ${nameToDelete.name}`)) {
+    if (window.confirm(`Delete ${nameToDelete.name}?`)) {
       personService
         .delName(id)
         .then(() => {
@@ -112,14 +108,44 @@ const App = () => {
     }
   }
 
+  const changeNumber = (id, newNumber) => {
+    const personToUpdate = persons.find(person => person.id === id)
+    console.log(personToUpdate)
+  
+    if (personToUpdate) {
+      if (personToUpdate.number !== newNumber) {
+        if (window.confirm(`${personToUpdate.name} is already in the phonebook, replace the old number with the new one?`)) {
+          const updatedPerson = { ...personToUpdate, number: newNumber }
+          console.log(updatedPerson)
+  
+          personService
+            .update(id, updatedPerson)
+            .then((response) => {
+              setPersons(persons.map(person => 
+                person.id !== id ? person : response.data
+              ))
+              setNewName('')
+              setNewNumber('')
+            })
+            .catch(error => {
+              console.log('Numeronvaihto epäonnistui', error)
+            })
+        }
+      } else {
+        alert(`${personToUpdate.name} already has this number.`)
+      }
+    }
+  }
+  
+
   return (
     <div>
       <h1>Phonebook</h1>      
       <Filter filterText={ filterText } handleFilterChange={ handleFilterChange }/>
 
       <h3>Add a new</h3>
-      <PersonForm addName={ addNameNumber } newName={ newName } handleName={ handleName } 
-        newNumber={ newNumber } handleNumber={ handleNumber } submit={'submit'} />
+      <PersonForm addNameNumber={ addNameNumber } newName={ newName } handleName={ handleName } 
+        newNumber={ newNumber } handleNumber={ handleNumber } />
 
       <h3>Numbers</h3>
       <Persons namesToShow={ namesToShow } deleteName={ deleteName }/>
@@ -127,5 +153,6 @@ const App = () => {
     </div>
   )
 }
+
 
 export default App
